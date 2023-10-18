@@ -1,0 +1,97 @@
+plugins {
+    id 'java'
+}
+
+group = 'ru.semperante'
+version = '1.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.9.1')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.15.2")
+    implementation("org.jboss.logging:jboss-logging:3.5.3.Final")
+
+
+}
+
+test {
+    useJUnitPlatform()
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+publishing {
+    publications {
+        maven(MavenPublication) {
+            artifactId = "tinkoffsdk"
+            groupId = "io.github.semperetante"
+            version = "1.0"
+            from components.java
+            pom {
+                packaging = "jar"
+                name.set("Tinkoff SDK")
+                url.set("https://github.com/SemperEtAnte/TinkoffSDK")
+                version = "1.0"
+                description.set("Tinkoff SDK")
+
+                licenses {
+                    license {
+                        name.set("The Apache License, Version 2.0")
+                        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                    }
+                }
+
+                scm {
+                    connection.set("scm:https://github.com/SemperEtAnte/TinkoffSDK.git")
+                    developerConnection.set("scm:git@github.com:SemperEtAnte/TinkoffSDK.git")
+                    url.set("https://github.com/SemperEtAnte/TinkoffSDK")
+                }
+
+                developers {
+                    developer {
+                        id.set("SemperAnte")
+                        name.set("George Troshin")
+                        email.set("zhorik280999@gmail.com")
+                    }
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            var releasesUrl = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+            var snapshotsUrl = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+            url = releasesUrl
+            if(version.endsWith("SNAPSHOT"))
+                url = snapshotsUrl
+
+            credentials {
+                username = project.properties["ossrhUsername"].toString()
+                password = project.properties["ossrhPassword"].toString()
+            }
+        }
+    }
+}
+signing {
+    sign(publishing.publications[0])
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+nexusStaging {
+    serverUrl = "https://s01.oss.sonatype.org/service/local/"
+    packageGroup = "io.github.semperetante"
+    username = project.properties["ossrhUsername"].toString()
+    password = project.properties["ossrhPassword"].toString()
+}
+tasks.withType(Javadoc) {
+    options.addStringOption('Xdoclint:none', '-quiet')
+    options.encoding = 'UTF-8'
+}
