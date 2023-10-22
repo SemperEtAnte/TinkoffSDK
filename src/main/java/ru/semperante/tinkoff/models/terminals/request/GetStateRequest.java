@@ -1,5 +1,6 @@
 package ru.semperante.tinkoff.models.terminals.request;
 
+import jakarta.validation.constraints.NotNull;
 import ru.semperante.tinkoff.ATerminalRequest;
 import ru.semperante.tinkoff.models.terminals.Order;
 import ru.semperante.tinkoff.models.terminals.response.ATerminalResponse;
@@ -10,10 +11,13 @@ import java.math.BigInteger;
 /**
  * @author SemperAnte
  * @version 1.0
+ * @since 1.0
  * Запрос на проверку статуса платежа
  */
 public final class GetStateRequest extends ATerminalRequest {
+   @NotNull
    private BigInteger PaymentId;
+
    private String Ip;
 
    public static GetStateRequest buildFromOrder(Order order) {

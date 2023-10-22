@@ -1,7 +1,9 @@
 package ru.semperante.tinkoff.models.terminals;
+
 /**
  * @author SemperAnte
  * @version 1.0
+ * @since 1.0
  * Описание полей <a href="https://www.tinkoff.ru/kassa/dev/payments/">тут</a>
  */
 public final class Payments {

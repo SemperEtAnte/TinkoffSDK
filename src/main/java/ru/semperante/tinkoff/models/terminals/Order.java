@@ -1,9 +1,11 @@
 package ru.semperante.tinkoff.models.terminals;
 
 import java.math.BigInteger;
+
 /**
  * @author SemperAnte
  * @version 1.0
+ * @since 1.0
  * Описание полей <a href="https://www.tinkoff.ru/kassa/dev/payments/">тут</a>
  */
 public class Order {

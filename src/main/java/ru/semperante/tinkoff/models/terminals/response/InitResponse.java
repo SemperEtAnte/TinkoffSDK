@@ -1,9 +1,11 @@
 package ru.semperante.tinkoff.models.terminals.response;
 
 import java.math.BigInteger;
+
 /**
  * @author SemperAnte
  * @version 1.0
+ * @since 1.0
  * Ответ на запрос Init
  */
 public final class InitResponse extends ATerminalResponse {

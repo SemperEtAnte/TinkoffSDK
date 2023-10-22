@@ -1,23 +1,27 @@
 package ru.semperante.tinkoff;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.validation.constraints.NotBlank;
 import ru.semperante.tinkoff.models.terminals.response.ATerminalResponse;
 
 /**
  * @author SemperAnte
  * @version 1.0
+ * @since 1.0
  * Абстрактный класс-dto запроса отправляемого на API терминалов
- *
+ * <p>
  * Более подробно о полях в <a href="https://www.tinkoff.ru/kassa/dev/payments/">документации</a>
  */
 public abstract class ATerminalRequest {
    /**
     * Токен генерируемый как "защита" запроса
     */
+   @NotBlank
    private String Token;
    /**
     * Ключ терминалов
     */
+   @NotBlank
 
    private String TerminalKey;
 
@@ -41,6 +45,7 @@ public abstract class ATerminalRequest {
 
    /**
     * Ожидаемое тело ответа
+    *
     * @return Класс отвечающий за тело ответа
     */
    @JsonIgnore
@@ -48,6 +53,7 @@ public abstract class ATerminalRequest {
 
    /**
     * Какой роутинг запроса (после основного роутинга API)
+    *
     * @return Строка-роутинг
     */
    @JsonIgnore

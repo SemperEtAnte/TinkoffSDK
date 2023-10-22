@@ -1,7 +1,9 @@
 package ru.semperante.tinkoff.models.terminals;
+
 /**
  * @author SemperAnte
  * @version 1.0
+ * @since 1.0
  * Описание полей <a href="https://www.tinkoff.ru/kassa/dev/payments/">тут</a>
  */
 public final class Item {
@@ -17,7 +19,6 @@ public final class Item {
    private String ShopCode;
    private AgentData AgentData;
    private ru.semperante.tinkoff.models.terminals.SupplierInfo SupplierInfo;
-
 
 
    public Item() {
@@ -139,6 +140,6 @@ public final class Item {
    }
 
    public enum Tax {
-      none,vat0,vat10,vat20,vat110,vat120
+      none, vat0, vat10, vat20, vat110, vat120
    }
 }

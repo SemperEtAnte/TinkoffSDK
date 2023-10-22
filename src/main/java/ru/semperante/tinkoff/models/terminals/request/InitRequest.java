@@ -3,17 +3,19 @@ package ru.semperante.tinkoff.models.terminals.request;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import ru.semperante.tinkoff.ATerminalRequest;
 import ru.semperante.tinkoff.models.terminals.Order;
-import ru.semperante.tinkoff.models.terminals.response.ATerminalResponse;
-import ru.semperante.tinkoff.models.terminals.response.InitResponse;
 import ru.semperante.tinkoff.models.terminals.Receipt;
 import ru.semperante.tinkoff.models.terminals.Shop;
+import ru.semperante.tinkoff.models.terminals.response.ATerminalResponse;
+import ru.semperante.tinkoff.models.terminals.response.InitResponse;
 
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
+
 /**
  * @author SemperAnte
  * @version 1.0
+ * @since 1.0
  * Инициализация платежа
  */
 public final class InitRequest extends ATerminalRequest {
@@ -36,7 +38,6 @@ public final class InitRequest extends ATerminalRequest {
 
    public InitRequest() {
    }
-
 
 
    public long getAmount() {
@@ -174,8 +175,7 @@ public final class InitRequest extends ATerminalRequest {
       return this;
    }
 
-   public static InitRequest buildFromOrder(Order order)
-   {
+   public static InitRequest buildFromOrder(Order order) {
       return new InitRequest().setAmount(order.getAmount()).setOrderId(String.valueOf(order.getId()));
    }
 

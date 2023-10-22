@@ -1,5 +1,6 @@
 package ru.semperante.tinkoff.models.terminals.request;
 
+import jakarta.validation.constraints.NotNull;
 import ru.semperante.tinkoff.ATerminalRequest;
 import ru.semperante.tinkoff.models.terminals.Order;
 import ru.semperante.tinkoff.models.terminals.response.ATerminalResponse;
@@ -8,9 +9,11 @@ import ru.semperante.tinkoff.models.terminals.response.CheckOrderResponse;
 /**
  * @author SemperAnte
  * @version 1.0
+ * @since 1.0
  * Тело запроса на проверку статуса заказа
  */
 public class CheckOrderRequest extends ATerminalRequest {
+   @NotNull
    private Long OrderId;
 
    public static CheckOrderRequest buildFromOrder(Order order) {

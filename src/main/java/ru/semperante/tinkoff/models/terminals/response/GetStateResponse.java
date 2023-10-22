@@ -4,9 +4,11 @@ import ru.semperante.tinkoff.models.terminals.PaymentStatus;
 
 import java.math.BigInteger;
 import java.util.List;
+
 /**
  * @author SemperAnte
  * @version 1.0
+ * @since 1.0
  * Ответ на запрос GetState
  */
 public final class GetStateResponse extends ATerminalResponse {

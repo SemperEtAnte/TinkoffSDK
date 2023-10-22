@@ -6,25 +6,20 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
 import org.jboss.logging.Logger;
 
 import java.net.http.HttpClient;
+
 /**
  * @author SemperAnte
- * @version 1.0
+ * @version 1.1
+ * @since 1.0
  * Класс ютилити с константами
  */
 public class TinkoffSDKConstants {
-   /**
-    * Маппер - для работы с JSON
-    */
-   public static final ObjectMapper MAPPER = new ObjectMapper()
-           .configure(JsonParser.Feature.IGNORE_UNDEFINED, true)
-           .configure(JsonGenerator.Feature.IGNORE_UNKNOWN, true)
-           .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-           .configure(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES, false)
-           .setSerializationInclusion(JsonInclude.Include.NON_NULL)
-           .setPropertyNamingStrategy(new PropertyNamingStrategies.UpperCamelCaseStrategy());
+
    /**
     * Клиент для отправки REST запросов
     */
@@ -33,6 +28,8 @@ public class TinkoffSDKConstants {
     * Логер, аналогичный тому что в спринге
     */
    public static final Logger LOGGER = Logger.getLogger("TinkoffAPI");
+
+   public static final Validator VALIDATOR = Validation.buildDefaultValidatorFactory().getValidator();
 
 
 }

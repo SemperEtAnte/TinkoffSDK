@@ -8,6 +8,7 @@ import java.util.List;
 /**
  * @author SemperAnte
  * @version 1.0
+ * @since 1.0
  * Ответ на запрос CheckOrder
  */
 public final class CheckOrderResponse extends ATerminalResponse {

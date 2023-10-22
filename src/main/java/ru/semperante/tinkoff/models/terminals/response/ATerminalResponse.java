@@ -3,9 +3,10 @@ package ru.semperante.tinkoff.models.terminals.response;
 /**
  * @author SemperAnte
  * @version 1.0
+ * @since 1.0
  * Абстрактный класс-dto ответа от Тинькофф
  * Описанные тут поля ВСЕГДА присутствует в ответе от API терминалов, потому вынесены в класс-родитель остальных dto ответов.
- *
+ * <p>
  * Более подробно о полях в <a href="https://www.tinkoff.ru/kassa/dev/payments/">документации</a>
  */
 public abstract class ATerminalResponse {

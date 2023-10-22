@@ -1,8 +1,13 @@
 package ru.semperante.tinkoff;
 
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ValidationException;
+import org.jboss.logging.Logger;
 import ru.semperante.tinkoff.models.terminals.response.ATerminalResponse;
 
 import java.io.IOException;
@@ -13,21 +18,28 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * @author SemperAnte
  * @version 1.0
+ * @since 1.0
  * Класс для отправки запросов на API для терминалов
  */
 public class TinkoffTerminalApi {
-
-   private static final URI BASE_URL = URI.create("https://securepay.tinkoff.ru/v2/");
+   /**
+    * Маппер - для работы с JSON
+    */
+   static final ObjectMapper MAPPER = new ObjectMapper()
+           .configure(JsonParser.Feature.IGNORE_UNDEFINED, true)
+           .configure(JsonGenerator.Feature.IGNORE_UNKNOWN, true)
+           .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+           .configure(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES, false)
+           .setSerializationInclusion(JsonInclude.Include.NON_NULL)
+           .setPropertyNamingStrategy(new PropertyNamingStrategies.UpperCamelCaseStrategy());
    private final String terminalKey;
    private final String password;
+   private URI baseUrl = URI.create("https://securepay.tinkoff.ru/v2/");
 
    public TinkoffTerminalApi(String terminalKey, String password) {
       this.terminalKey = terminalKey;
@@ -37,17 +49,26 @@ public class TinkoffTerminalApi {
       }
    }
 
+   /**
+    * На случай если корень api поменяется
+    *
+    * @param url ссылка-корень для запросов
+    */
+   public void setBaseUrl(String url) {
+      this.baseUrl = URI.create(url);
+   }
 
    /**
     * Отправка запроса
+    *
     * @param request Тело запроса
+    * @param <T>     Тип ответа определяемый в запросе
     * @return Ответ типа T
-    * @param <T> Тип ответа определяемый в запросе
     * @throws IOException          Ошибка отправки
     * @throws InterruptedException Поток умер раньше нужного
     */
    public <T extends ATerminalResponse> T sendRequest(ATerminalRequest request) throws IOException, InterruptedException {
-      return sendRequest(request, TinkoffSDKConstants.MAPPER.constructType(request.responseType()));
+      return sendRequest(request, MAPPER.constructType(request.responseType()));
    }
 
    /**
@@ -64,24 +85,33 @@ public class TinkoffTerminalApi {
    private <T extends ATerminalResponse> T sendRequest(ATerminalRequest request, JavaType responseType) throws IOException, InterruptedException {
       request.setTerminalKey(terminalKey);
       makeToken(request);
-      String jsonBody = TinkoffSDKConstants.MAPPER.writeValueAsString(request);
+      Set<ConstraintViolation<ATerminalRequest>> validationErrors = TinkoffSDKConstants.VALIDATOR.validate(request);
+      if (validationErrors != null && !validationErrors.isEmpty()) {
+         StringBuilder sb = new StringBuilder("Validation error:\n");
+         for (ConstraintViolation<ATerminalRequest> error : validationErrors) {
+            sb.append(error.getMessage()).append("\n");
+         }
+         throw new ValidationException(sb.toString());
+      }
+      String jsonBody = MAPPER.writeValueAsString(request);
       HttpRequest req = HttpRequest.newBuilder()
               .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
-              .uri(BASE_URL.resolve(request.routing()))
+              .uri(baseUrl.resolve(request.routing()))
               .header("Content-Type", "application/json")
               .header("Accept", "application/json")
               .build();
-      TinkoffSDKConstants.LOGGER.infof("Sending tinkoff request: %s", jsonBody);
+      TinkoffSDKConstants.LOGGER.debugf("Sending tinkoff request: %s", jsonBody);
       HttpResponse<String> response = TinkoffSDKConstants.HTTP_CLIENT.send(req, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
       if (response.statusCode() != 200) {
          TinkoffSDKConstants.LOGGER.errorf("Tinkoff response isn't 200. Code: %d.\nRequest Body: %s\nResponse body: %s", response.statusCode(), jsonBody, response.body());
          throw new IOException("Response isn't 200");
       }
 
+      TinkoffSDKConstants.LOGGER.infof("Request: %s\nResponse: %s", jsonBody, response.body());
       if (responseType != null) {
-         T res = TinkoffSDKConstants.MAPPER.readValue(response.body(), responseType);
-         if (res.getSuccess() == null || !res.getSuccess() || !"0".equals(res.getErrorCode())) {
-            throw new TinkoffResponseException(res);
+         T res = MAPPER.readValue(response.body(), responseType);
+         if (res.getSuccess() == null || !res.getSuccess() || (res.getErrorCode() != null && !"0".equals(res.getErrorCode()))) {
+            throw new TinkoffTerminalResponseException(res);
          }
          return res;
       }
@@ -92,10 +122,9 @@ public class TinkoffTerminalApi {
     * Метод вычисляющий и добавляющий в тело запроса поле Token
     *
     * @param body Оригинальное тело запроса
-    * @return Дополненное полем Token тело запроса (новый объект)
     */
    private void makeToken(ATerminalRequest body) {
-      ObjectNode res = TinkoffSDKConstants.MAPPER.convertValue(body, ObjectNode.class);
+      ObjectNode res = MAPPER.convertValue(body, ObjectNode.class);
       SortedMap<String, String> values = new TreeMap<>();
       Iterator<Map.Entry<String, JsonNode>> fields = res.fields();
       while (fields.hasNext()) {
