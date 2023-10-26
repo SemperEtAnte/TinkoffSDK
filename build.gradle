@@ -38,13 +38,13 @@ publishing {
         maven(MavenPublication) {
             artifactId = "tinkoffsdk"
             groupId = "io.github.semperetante"
-            version = "1.0"
+            version = project.version
             from components.java
             pom {
                 packaging = "jar"
                 name.set("Tinkoff SDK")
                 url.set("https://github.com/SemperEtAnte/TinkoffSDK")
-                version = "1.0"
+                version = project.version
                 description.set("Tinkoff SDK")
 
                 licenses {
@@ -97,6 +97,8 @@ nexusStaging {
     packageGroup = "io.github.semperetante"
     username = project.properties["ossrhUsername"].toString()
     password = project.properties["ossrhPassword"].toString()
+    stagingProfileId  = project.properties["sonatypeId"].toString()
+    stagingRepositoryId  = project.properties["sonatypeId"].toString()
 }
 tasks.withType(Javadoc) {
     options.addStringOption('Xdoclint:none', '-quiet')

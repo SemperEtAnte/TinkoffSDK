@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ValidationException;
-import org.jboss.logging.Logger;
+import ru.semperante.tinkoff.models.terminals.NotificationBody;
 import ru.semperante.tinkoff.models.terminals.response.ATerminalResponse;
 
 import java.io.IOException;
@@ -39,6 +39,7 @@ public class TinkoffTerminalApi {
            .setPropertyNamingStrategy(new PropertyNamingStrategies.UpperCamelCaseStrategy());
    private final String terminalKey;
    private final String password;
+
    private URI baseUrl = URI.create("https://securepay.tinkoff.ru/v2/");
 
    public TinkoffTerminalApi(String terminalKey, String password) {
@@ -124,7 +125,25 @@ public class TinkoffTerminalApi {
     * @param body Оригинальное тело запроса
     */
    private void makeToken(ATerminalRequest body) {
-      ObjectNode res = MAPPER.convertValue(body, ObjectNode.class);
+      body.setToken(calculateToken(MAPPER.convertValue(body, ObjectNode.class)));
+   }
+
+   /**
+    * Ютилити метод для проверки валидности тела "уведомления"
+    *
+    * @param notificationBody тело уведомления
+    * @return строка-токен
+    */
+   public String calculateToken(NotificationBody notificationBody) {
+      return calculateToken(MAPPER.convertValue(notificationBody, ObjectNode.class));
+   }
+
+   /**
+    * Вычисление токена для кастомного объекта (на всякий случай)
+    * @param res Объект ковертированный в ObjectNode
+    * @return Токен
+    */
+   public String calculateToken(ObjectNode res) {
       SortedMap<String, String> values = new TreeMap<>();
       Iterator<Map.Entry<String, JsonNode>> fields = res.fields();
       while (fields.hasNext()) {
@@ -134,11 +153,11 @@ public class TinkoffTerminalApi {
          }
       }
       values.put("Password", password);
+      values.remove("Token");
       String token = String.join("", values.values());
       try {
          byte[] digest = MessageDigest.getInstance("SHA-256").digest(token.getBytes(StandardCharsets.UTF_8));
-         token = String.format("%064x", new BigInteger(1, digest));
-         body.setToken(token);
+         return String.format("%064x", new BigInteger(1, digest));
       }
       catch (NoSuchAlgorithmException e) {
          throw new RuntimeException(e);
