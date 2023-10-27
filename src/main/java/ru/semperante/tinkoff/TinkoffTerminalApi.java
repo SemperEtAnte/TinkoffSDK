@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ValidationException;
-import ru.semperante.tinkoff.models.terminals.NotificationBody;
+import ru.semperante.tinkoff.models.terminals.PaymentNotificationBody;
 import ru.semperante.tinkoff.models.terminals.response.ATerminalResponse;
 
 import java.io.IOException;
@@ -22,7 +22,7 @@ import java.util.*;
 
 /**
  * @author SemperAnte
- * @version 1.0
+ * @version 1.1
  * @since 1.0
  * Класс для отправки запросов на API для терминалов
  */
@@ -131,11 +131,11 @@ public class TinkoffTerminalApi {
    /**
     * Ютилити метод для проверки валидности тела "уведомления"
     *
-    * @param notificationBody тело уведомления
+    * @param paymentNotificationBody тело уведомления
     * @return строка-токен
     */
-   public String calculateToken(NotificationBody notificationBody) {
-      return calculateToken(MAPPER.convertValue(notificationBody, ObjectNode.class));
+   public String calculateToken(PaymentNotificationBody paymentNotificationBody) {
+      return calculateToken(MAPPER.convertValue(paymentNotificationBody, ObjectNode.class));
    }
 
    /**

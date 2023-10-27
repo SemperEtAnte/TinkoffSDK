@@ -2,7 +2,14 @@ package ru.semperante.tinkoff.models.terminals;
 
 import java.util.Map;
 
-public record NotificationBody(
+/**
+ * @author SemperAnte
+ * @since 1.1.1
+ * @version 1.0
+ * Тело "Уведомления" об оплате
+ *
+ */
+public record PaymentNotificationBody(
         String TerminalKey,
         String Amount,
         String OrderId,
