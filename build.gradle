@@ -98,7 +98,6 @@ nexusStaging {
     username = project.properties["ossrhUsername"].toString()
     password = project.properties["ossrhPassword"].toString()
     stagingProfileId  = project.properties["sonatypeId"].toString()
-    stagingRepositoryId  = project.properties["sonatypeId"].toString()
 }
 tasks.withType(Javadoc) {
     options.addStringOption('Xdoclint:none', '-quiet')

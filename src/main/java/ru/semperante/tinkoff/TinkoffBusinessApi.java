@@ -3,10 +3,13 @@ package ru.semperante.tinkoff;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.validation.ConstraintViolation;
-import jakarta.validation.ValidationException;
+import jakarta.validation.ConstraintViolationException;
 import ru.semperante.tinkoff.models.business.response.ABusinessResponse;
 
 import java.io.IOException;
@@ -32,7 +35,7 @@ public class TinkoffBusinessApi {
            .configure(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES, false)
            .setSerializationInclusion(JsonInclude.Include.NON_NULL);
    private final String authorization;
-   private URI baseUrl = URI.create("https://business.tinkoff.ru/openapi/api/v1/openapi/");
+   private URI baseUrl = URI.create("https://business.tinkoff.ru/openapi/api/v1");
 
    public TinkoffBusinessApi(String authorization) {
 
@@ -60,9 +63,11 @@ public class TinkoffBusinessApi {
       }
       return result.toString();
    }
+
    public static String objectToParams(Object on) {
       return objectToParams(MAPPER.convertValue(on, ObjectNode.class));
    }
+
    /**
     * На случай если корень api поменяется
     *
@@ -99,11 +104,7 @@ public class TinkoffBusinessApi {
    private <T extends ABusinessResponse> T sendRequest(ABusinessRequest request, JavaType responseType) throws IOException, InterruptedException {
       Set<ConstraintViolation<ABusinessRequest>> validationErrors = TinkoffSDKConstants.VALIDATOR.validate(request);
       if (validationErrors != null && !validationErrors.isEmpty()) {
-         StringBuilder sb = new StringBuilder("Validation error:\n");
-         for (ConstraintViolation<ABusinessRequest> error : validationErrors) {
-            sb.append(error.getMessage()).append("\n");
-         }
-         throw new ValidationException(sb.toString());
+         throw new ConstraintViolationException(validationErrors);
       }
       String routing = request.routing();
       HttpRequest.BodyPublisher bp = HttpRequest.BodyPublishers.noBody();
@@ -115,13 +116,14 @@ public class TinkoffBusinessApi {
          }
          default -> throw new IllegalArgumentException("Unsupported method " + request.method());
       }
+      URI reqUri = baseUrl.resolve(routing);
       HttpRequest req = HttpRequest.newBuilder()
-              .uri(baseUrl.resolve(routing.toString()))
+              .uri(baseUrl.resolve(routing))
               .method(request.method(), bp)
               .header("Accept", "application/json")
               .header("Authorization", authorization)
               .build();
-      TinkoffSDKConstants.LOGGER.debugf("Sending tinkoff request: %s", on);
+      TinkoffSDKConstants.LOGGER.debugf("Sending tinkoff request: %s\n%s", reqUri, on);
       HttpResponse<String> response = TinkoffSDKConstants.HTTP_CLIENT.send(req, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
       if (response.statusCode() != 200) {
          TinkoffSDKConstants.LOGGER.errorf("Tinkoff response isn't 200. Code: %d.\nRequest Body: %s\nResponse body: %s", response.statusCode(), on, response.body());
