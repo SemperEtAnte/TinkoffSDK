@@ -3,10 +3,7 @@ package ru.semperante.tinkoff;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
@@ -24,7 +21,7 @@ import java.util.Set;
 /**
  * @author SemperAnte
  * @version 1.1
- * @since 1.0
+ * @since 1.1
  * Класс для отправки запросов на API для бизнеса
  */
 public class TinkoffBusinessApi {
@@ -33,9 +30,10 @@ public class TinkoffBusinessApi {
            .configure(JsonGenerator.Feature.IGNORE_UNKNOWN, true)
            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
            .configure(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES, false)
+           .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
            .setSerializationInclusion(JsonInclude.Include.NON_NULL);
    private final String authorization;
-   private URI baseUrl = URI.create("https://business.tinkoff.ru/openapi/api/v1");
+   private URI baseUrl = URI.create("https://business.tinkoff.ru/openapi/api/v1/");
 
    public TinkoffBusinessApi(String authorization) {
 
@@ -126,12 +124,12 @@ public class TinkoffBusinessApi {
       TinkoffSDKConstants.LOGGER.debugf("Sending tinkoff request: %s\n%s", reqUri, on);
       HttpResponse<String> response = TinkoffSDKConstants.HTTP_CLIENT.send(req, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
       if (response.statusCode() != 200) {
-         TinkoffSDKConstants.LOGGER.errorf("Tinkoff response isn't 200. Code: %d.\nRequest Body: %s\nResponse body: %s", response.statusCode(), on, response.body());
+         TinkoffSDKConstants.LOGGER.errorf("Tinkoff response isn't 200. RequestURI: %s, Code: %d.\nRequest Body: %s\nResponse body: %s", reqUri, response.statusCode(), on, response.body());
          throw new IOException("Response isn't 200");
       }
       if (responseType != null) {
          T res = MAPPER.readValue(response.body(), responseType);
-         if (res.getErrorCode() == null || !"0".equals(res.getErrorCode())) {
+         if (res.getErrorCode() != null && !"0".equals(res.getErrorCode())) {
             throw new TinkoffBusinessResponseException(res);
          }
          return res;

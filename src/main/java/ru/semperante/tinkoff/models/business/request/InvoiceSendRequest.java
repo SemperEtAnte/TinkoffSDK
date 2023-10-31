@@ -1,5 +1,6 @@
 package ru.semperante.tinkoff.models.business.request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -27,7 +28,9 @@ public class InvoiceSendRequest extends ABusinessRequest {
    @Pattern(regexp = "^\\d{1,15}$")
    @NotNull
    private String invoiceNumber;
+   @JsonFormat(pattern = "yyyy-MM-dd")
    private Date dueDate;
+   @JsonFormat(pattern = "yyyy-MM-dd")
    private Date invoiceDAte;
    @Pattern(regexp = "^(\\d{20}|\\d{22})$")
    private String accountNumber;
