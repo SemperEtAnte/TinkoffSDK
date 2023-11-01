@@ -1,5 +1,6 @@
 package ru.semperante.tinkoff.models.business.request;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import ru.semperante.tinkoff.ABusinessRequest;
 import ru.semperante.tinkoff.models.business.response.ABusinessResponse;
 import ru.semperante.tinkoff.models.business.response.InvoiceInfoResponse;
@@ -15,6 +16,7 @@ import java.util.UUID;
  * Ознакомиться с описанием можно <a href="https://developer.tinkoff.ru/docs/api/get-api-v-1-invoice-invoice-id-info">тут</a>
  */
 public class InvoiceInfoRequest extends ABusinessRequest {
+   @JsonIgnore
    private UUID invoiceId;
 
    public InvoiceInfoRequest() {
