@@ -42,7 +42,7 @@ public class InvoiceInfoRequest extends ABusinessRequest {
 
    @Override
    public String routing() {
-      return "invoice/" + invoiceId + "/info";
+      return "openapi/invoice/" + invoiceId + "/info";
    }
 
    @Override

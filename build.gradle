@@ -6,8 +6,10 @@ plugins {
 }
 
 group = 'ru.semperante'
-version = '1.1.4'
+version = '1.1.6'
 
+targetCompatibility = JavaVersion.VERSION_17
+sourceCompatibility = JavaVersion.VERSION_17
 repositories {
     mavenCentral()
 }
@@ -20,9 +22,6 @@ dependencies {
     implementation("jakarta.validation:jakarta.validation-api:3.0.2")
     implementation 'org.hibernate.validator:hibernate-validator:8.0.1.Final'
     implementation 'org.glassfish.expressly:expressly:5.0.0'
-
-
-
 }
 
 test {
@@ -75,7 +74,7 @@ publishing {
             var releasesUrl = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
             var snapshotsUrl = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
             url = releasesUrl
-            if(version.endsWith("SNAPSHOT"))
+            if (version.endsWith("SNAPSHOT"))
                 url = snapshotsUrl
 
             credentials {
@@ -97,7 +96,7 @@ nexusStaging {
     packageGroup = "io.github.semperetante"
     username = project.properties["ossrhUsername"].toString()
     password = project.properties["ossrhPassword"].toString()
-    stagingProfileId  = project.properties["sonatypeId"].toString()
+    stagingProfileId = project.properties["sonatypeId"].toString()
 }
 tasks.withType(Javadoc) {
     options.addStringOption('Xdoclint:none', '-quiet')
