@@ -3,8 +3,8 @@ package ru.semperante.tinkoff.models.terminals.request;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import ru.semperante.tinkoff.ATerminalRequest;
 import ru.semperante.tinkoff.models.terminals.Order;
-import ru.semperante.tinkoff.models.terminals.Receipt;
 import ru.semperante.tinkoff.models.terminals.Shop;
+import ru.semperante.tinkoff.models.terminals.receipt.AReceipt;
 import ru.semperante.tinkoff.models.terminals.response.ATerminalResponse;
 import ru.semperante.tinkoff.models.terminals.response.InitResponse;
 
@@ -32,7 +32,7 @@ public final class InitRequest extends ATerminalRequest {
    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
    private Timestamp RedirectDueDate;
    private Map<String, String> DATA;
-   private Receipt Receipt;
+   private AReceipt<?> Receipt;
    private List<Shop> Shops;
    private String Descriptor;
 
@@ -148,11 +148,11 @@ public final class InitRequest extends ATerminalRequest {
       return this;
    }
 
-   public ru.semperante.tinkoff.models.terminals.Receipt getReceipt() {
+   public AReceipt<?> getReceipt() {
       return Receipt;
    }
 
-   public InitRequest setReceipt(ru.semperante.tinkoff.models.terminals.Receipt receipt) {
+   public InitRequest setReceipt(AReceipt<?> receipt) {
       Receipt = receipt;
       return this;
    }

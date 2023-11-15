@@ -1,4 +1,4 @@
-package ru.semperante.tinkoff.models.terminals;
+package ru.semperante.tinkoff.models.terminals.receipt;
 
 /**
  * @author SemperAnte
