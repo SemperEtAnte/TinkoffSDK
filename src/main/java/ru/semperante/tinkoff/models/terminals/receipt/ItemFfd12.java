@@ -1,7 +1,6 @@
 package ru.semperante.tinkoff.models.terminals.receipt;
 
 public class ItemFfd12 extends AItem {
-
    private PaymentObject PaymentObject;
    private String UserData;
    private String Excise;
@@ -16,6 +15,46 @@ public class ItemFfd12 extends AItem {
 
    public ItemFfd12.PaymentObject getPaymentObject() {
       return PaymentObject;
+   }
+
+   public ItemFfd12 setName(String name) {
+      Name = name;
+      return this;
+   }
+
+   public ItemFfd12 setPrice(Long price) {
+      Price = price;
+      return this;
+   }
+
+   public ItemFfd12 setQuantity(Double quantity) {
+      Quantity = quantity;
+      return this;
+   }
+
+   public ItemFfd12 setAmount(Long amount) {
+      Amount = amount;
+      return this;
+   }
+
+   public ItemFfd12 setPaymentMethod(ItemFfd105.PaymentMethod paymentMethod) {
+      PaymentMethod = paymentMethod;
+      return this;
+   }
+
+   public ItemFfd12 setTax(AItem.Tax tax) {
+      Tax = tax;
+      return this;
+   }
+
+   public ItemFfd12 setAgentData(ru.semperante.tinkoff.models.terminals.receipt.AgentData agentData) {
+      AgentData = agentData;
+      return this;
+   }
+
+   public ItemFfd12 setSupplierInfo(ru.semperante.tinkoff.models.terminals.receipt.SupplierInfo supplierInfo) {
+      SupplierInfo = supplierInfo;
+      return this;
    }
 
    public ItemFfd12 setPaymentObject(ItemFfd12.PaymentObject paymentObject) {

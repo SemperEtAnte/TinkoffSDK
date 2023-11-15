@@ -8,8 +8,7 @@ import java.util.List;
  * @since 1.0
  * Описание полей <a href="https://www.tinkoff.ru/kassa/dev/payments/">тут</a>
  */
-public class Receipt105 extends AReceipt<ItemFfd105>{
-
+public class Receipt105 extends AReceipt<ItemFfd105> {
    private List<ItemFfd105> Items;
 
    public Receipt105() {
@@ -20,6 +19,25 @@ public class Receipt105 extends AReceipt<ItemFfd105>{
       this.Taxation = taxation;
    }
 
+   public Receipt105 setEmail(String email) {
+      Email = email;
+      return this;
+   }
+
+   public Receipt105 setPhone(String phone) {
+      Phone = phone;
+      return this;
+   }
+
+   public Receipt105 setTaxation(AReceipt.Taxation taxation) {
+      Taxation = taxation;
+      return this;
+   }
+
+   public Receipt105 setPayments(ru.semperante.tinkoff.models.terminals.receipt.Payments payments) {
+      Payments = payments;
+      return this;
+   }
 
    @Override
    public String getFfdVersion() {

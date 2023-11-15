@@ -25,41 +25,16 @@ public abstract class AReceipt<T extends AItem> {
       return Email;
    }
 
-   public AReceipt<T> setEmail(String email) {
-      Email = email;
-      return this;
-   }
-
    public String getPhone() {
       return Phone;
-   }
-
-   public AReceipt<T> setPhone(String phone) {
-      Phone = phone;
-      return this;
    }
 
    public AReceipt.Taxation getTaxation() {
       return Taxation;
    }
 
-   public AReceipt<T> setTaxation(AReceipt.Taxation taxation) {
-      Taxation = taxation;
-      return this;
-   }
-
-   public ru.semperante.tinkoff.models.terminals.receipt.Payments getPayments() {
+   public Payments getPayments() {
       return Payments;
-   }
-
-   public AReceipt<T> setPayments(ru.semperante.tinkoff.models.terminals.receipt.Payments payments) {
-      Payments = payments;
-      return this;
-   }
-
-   public AReceipt<T> setItems(T... items) {
-      setItems(List.of(items));
-      return this;
    }
 
    public enum Taxation {

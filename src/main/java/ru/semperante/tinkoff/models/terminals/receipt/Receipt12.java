@@ -3,6 +3,8 @@ package ru.semperante.tinkoff.models.terminals.receipt;
 import java.util.List;
 
 public class Receipt12 extends AReceipt<ItemFfd12> {
+
+
    private List<ItemFfd12> Items;
    private ClientInfo ClientInfo;
    private String Customer;
@@ -45,8 +47,28 @@ public class Receipt12 extends AReceipt<ItemFfd12> {
       return Items;
    }
 
+   public Receipt12 setEmail(String email) {
+      Email = email;
+      return this;
+   }
+
+   public Receipt12 setPhone(String phone) {
+      Phone = phone;
+      return this;
+   }
+
+   public Receipt12 setTaxation(AReceipt.Taxation taxation) {
+      Taxation = taxation;
+      return this;
+   }
+
+   public Receipt12 setPayments(ru.semperante.tinkoff.models.terminals.receipt.Payments payments) {
+      Payments = payments;
+      return this;
+   }
+
    @Override
-   public AReceipt<ItemFfd12> setItems(List<ItemFfd12> items) {
+   public Receipt12 setItems(List<ItemFfd12> items) {
       this.Items = items;
       return this;
    }
