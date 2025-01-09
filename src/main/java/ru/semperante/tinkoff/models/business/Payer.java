@@ -1,6 +1,8 @@
 package ru.semperante.tinkoff.models.business;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 /**
  * @author SemperAnte
@@ -10,10 +12,11 @@ import jakarta.validation.constraints.NotBlank;
  */
 public class Payer {
    @NotBlank
+   @Size(max = 512)
    private String name;
-   @NotBlank
+   @Pattern(regexp = "^(\\d{12}|\\d{10})$")
    private String inn;
-   @NotBlank
+   @Pattern(regexp = "^(\\d{9})$")
    private String kpp;
 
    public String getName() {
