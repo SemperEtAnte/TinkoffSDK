@@ -26,13 +26,13 @@ import java.util.Set;
  */
 public class TinkoffBusinessApi {
    static final ObjectMapper MAPPER = new ObjectMapper()
-           .configure(JsonParser.Feature.IGNORE_UNDEFINED, true)
-           .configure(JsonGenerator.Feature.IGNORE_UNKNOWN, true)
-           .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-           .configure(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES, false)
-           .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
-           .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-           .setSerializationInclusion(JsonInclude.Include.NON_NULL);
+                                            .configure(JsonParser.Feature.IGNORE_UNDEFINED, true)
+                                            .configure(JsonGenerator.Feature.IGNORE_UNKNOWN, true)
+                                            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                                            .configure(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES, false)
+                                            .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
+                                            .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+                                            .setSerializationInclusion(JsonInclude.Include.NON_NULL);
    private final String authorization;
    private URI baseUrl = URI.create("https://business.tinkoff.ru/openapi/api/v1/");
 
@@ -42,29 +42,6 @@ public class TinkoffBusinessApi {
          throw new IllegalArgumentException("Authorization is null!");
       }
       this.authorization = "Bearer " + authorization;
-   }
-
-   public static String objectToParams(ObjectNode on) {
-      StringBuilder result = new StringBuilder();
-      boolean found = false;
-      for (Iterator<String> it = on.fieldNames(); it.hasNext(); ) {
-         String field = it.next();
-         JsonNode val = on.get(field);
-         if (val != null && val.isValueNode() && !val.isNull()) {
-            if (!found) {
-               result.append("?");
-               found = true;
-            } else {
-               result.append("&");
-            }
-            result.append(field).append("=").append(URLEncoder.encode(val.asText(), StandardCharsets.UTF_8));
-         }
-      }
-      return result.toString();
-   }
-
-   public static String objectToParams(Object on) {
-      return objectToParams(MAPPER.convertValue(on, ObjectNode.class));
    }
 
    /**
@@ -117,11 +94,12 @@ public class TinkoffBusinessApi {
       }
       URI reqUri = baseUrl.resolve(routing);
       HttpRequest req = HttpRequest.newBuilder()
-              .uri(baseUrl.resolve(routing))
-              .method(request.method(), bp)
-              .header("Accept", "application/json")
-              .header("Authorization", authorization)
-              .build();
+                              .uri(baseUrl.resolve(routing))
+                              .method(request.method(), bp)
+                              .header("Accept", "application/json")
+                              .header("Content-Type", request.contentType())
+                              .header("Authorization", authorization)
+                              .build();
       TinkoffSDKConstants.LOGGER.debugf("Sending tinkoff request: %s\n%s", reqUri, on);
       HttpResponse<String> response = TinkoffSDKConstants.HTTP_CLIENT.send(req, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
       if (response.statusCode() != 200) {
@@ -136,5 +114,28 @@ public class TinkoffBusinessApi {
          return res;
       }
       return null;
+   }
+
+   public static String objectToParams(ObjectNode on) {
+      StringBuilder result = new StringBuilder();
+      boolean found = false;
+      for (Iterator<String> it = on.fieldNames(); it.hasNext(); ) {
+         String field = it.next();
+         JsonNode val = on.get(field);
+         if (val != null && val.isValueNode() && !val.isNull()) {
+            if (!found) {
+               result.append("?");
+               found = true;
+            } else {
+               result.append("&");
+            }
+            result.append(field).append("=").append(URLEncoder.encode(val.asText(), StandardCharsets.UTF_8));
+         }
+      }
+      return result.toString();
+   }
+
+   public static String objectToParams(Object on) {
+      return objectToParams(MAPPER.convertValue(on, ObjectNode.class));
    }
 }

@@ -34,4 +34,9 @@ public abstract class ABusinessRequest {
    @JsonIgnore
    public abstract String method();
 
+   @JsonIgnore
+   public String contentType() {
+      return "application/json";
+   }
+
 }

@@ -1,11 +1,13 @@
+import com.vanniktech.maven.publish.SonatypeHost
+
 plugins {
     id 'java'
     id 'signing'
     id 'maven-publish'
-    id "io.codearte.nexus-staging" version '0.30.0'
+    id "com.vanniktech.maven.publish" version "0.30.0"
 }
 
-group = 'ru.semperante'
+group = 'io.github.semperetante'
 version = '1.1.8'
 
 targetCompatibility = JavaVersion.VERSION_17
@@ -28,76 +30,49 @@ test {
     useJUnitPlatform()
 }
 
-java {
-    withJavadocJar()
-    withSourcesJar()
-}
-publishing {
-    publications {
-        maven(MavenPublication) {
-            artifactId = "tinkoffsdk"
-            groupId = "io.github.semperetante"
-            version = project.version
-            from components.java
-            pom {
-                packaging = "jar"
-                name.set("Tinkoff SDK")
-                url.set("https://github.com/SemperEtAnte/TinkoffSDK")
-                version = project.version
-                description.set("Tinkoff SDK")
-
-                licenses {
-                    license {
-                        name.set("The Apache License, Version 2.0")
-                        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
-                    }
-                }
-
-                scm {
-                    connection.set("scm:https://github.com/SemperEtAnte/TinkoffSDK.git")
-                    developerConnection.set("scm:git@github.com:SemperEtAnte/TinkoffSDK.git")
-                    url.set("https://github.com/SemperEtAnte/TinkoffSDK")
-                }
-
-                developers {
-                    developer {
-                        id.set("SemperAnte")
-                        name.set("George Troshin")
-                        email.set("zhorik280999@gmail.com")
-                    }
-                }
-            }
-        }
-    }
-    repositories {
-        maven {
-            var releasesUrl = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
-            var snapshotsUrl = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
-            url = releasesUrl
-            if (version.endsWith("SNAPSHOT"))
-                url = snapshotsUrl
-
-            credentials {
-                username = project.properties["ossrhUsername"].toString()
-                password = project.properties["ossrhPassword"].toString()
-            }
-        }
-    }
-}
-signing {
-    sign(publishing.publications[0])
-}
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
-nexusStaging {
-    serverUrl = "https://s01.oss.sonatype.org/service/local/"
-    packageGroup = "io.github.semperetante"
-    username = project.properties["ossrhUsername"].toString()
-    password = project.properties["ossrhPassword"].toString()
-    stagingProfileId = project.properties["sonatypeId"].toString()
+mavenPublishing{
+    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+    signAllPublications()
+    pom {
+        packaging = "jar"
+        name.set("Tinkoff SDK")
+        url.set("https://github.com/SemperEtAnte/TinkoffSDK")
+        version = project.version
+        description.set("Tinkoff SDK")
+
+        licenses {
+            license {
+                name.set("The Apache License, Version 2.0")
+                url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+            }
+        }
+
+        scm {
+            connection.set("scm:https://github.com/SemperEtAnte/TinkoffSDK.git")
+            developerConnection.set("scm:git@github.com:SemperEtAnte/TinkoffSDK.git")
+            url.set("https://github.com/SemperEtAnte/TinkoffSDK")
+        }
+
+        developers {
+            developer {
+                id.set("SemperAnte")
+                name.set("George Troshin")
+                email.set("zhorik280999@gmail.com")
+            }
+        }
+    }
 }
+//nexusStaging {
+//    serverUrl = "https://s01.oss.sonatype.org/service/local/"
+//    packageGroup = "io.github.semperetante"
+//    username = project.properties["ossrhUsername"].toString()
+//    password = project.properties["ossrhPassword"].toString()
+//    stagingProfileId = project.properties["sonatypeId"].toString()
+//}
 tasks.withType(Javadoc) {
     options.addStringOption('Xdoclint:none', '-quiet')
     options.encoding = 'UTF-8'
